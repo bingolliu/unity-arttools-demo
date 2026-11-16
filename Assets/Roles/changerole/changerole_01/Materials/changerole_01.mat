@@ -1,0 +1,214 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: changerole_01
+  m_Shader: {fileID: 4800000, guid: c2fe79e32dc00164fbc273154fcf90ee, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _ANISOTROPICMODE_ON
+  m_InvalidKeywords:
+  - _ANISOTROPICMODE_NONE
+  - _BuffOn
+  - _EDITEMISSIVE_ON
+  - _FlowOn
+  - _MaskOn
+  - _NormalOn
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BuffTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissiveTex:
+        m_Texture: {fileID: 2800000, guid: 8ed76f9f619ebc942a05f723772be9e8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FlowMap:
+        m_Texture: {fileID: 2800000, guid: f811417e1faa6fa44bb072b4a2b4d4d4, type: 3}
+        m_Scale: {x: 2, y: 2}
+        m_Offset: {x: 0, y: 0}
+    - _FlowMask:
+        m_Texture: {fileID: 2800000, guid: 91141563e448a2149909ce982aa0c78b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _IBLCubeMap:
+        m_Texture: {fileID: 8900000, guid: 9e1bd719889eb9f438229182370daf99, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 590c6c3047b16c24c82d2604a6834f8b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTex:
+        m_Texture: {fileID: 2800000, guid: 6c6903cadce6c6d4ca91211ca3441b44, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetalSmoothTex:
+        m_Texture: {fileID: 2800000, guid: ffbfbc2a225165047848b1d70db35551, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MiscelTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalTex:
+        m_Texture: {fileID: 2800000, guid: 741048e340718474ab4fa73f78b41714, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ReflectTex:
+        m_Texture: {fileID: 2800000, guid: ab9ec1d8506d4f64cb6044065dd89e7d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _sepc_tex:
+        m_Texture: {fileID: 2800000, guid: 922601463f1f46543baef97c7b0c70b9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _ANISOTROPICMODE: 1
+    - _AOBaseMinScale: 1
+    - _AmbientOcclusionIntensity: 1
+    - _AnisoAngle: 0.847
+    - _AnisotropyPower: 1.3
+    - _AnisotropyPowerSub: 1.38
+    - _AnisotropyRotate: 25.1
+    - _AnisotropyRotateSub: 180
+    - _AnisotropyShift: 0.82
+    - _AnisotropyShiftSub: 0.14
+    - _Bias: 0.01
+    - _BlinkTime: 0
+    - _BloomFactor: 0
+    - _BorderCutOff: 0.1
+    - _BuffOn: 1
+    - _BuffStep: 0
+    - _BuffStrength: 0
+    - _BuffYSpeed: 0
+    - _BumpScale: 1
+    - _CosMin: 0.5
+    - _Cull: 2
+    - _CullOff: 1
+    - _CutOff: 0.8
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DirLightExposure: 1.25
+    - _DistortValue: 0.2
+    - _DstBlend: 0
+    - _EDITBUFF: 0
+    - _EDITEMISSIVE: 1
+    - _EmissionExposure: 1
+    - _EnvExposure: 1
+    - _FlowOn: 1
+    - _FlowValue: 1
+    - _GlossMapScale: 1
+    - _Glossiness: 0
+    - _GlossyReflections: 1
+    - _HalfLambert: 0
+    - _HeightScale: 0
+    - _IBLCubeRotation: 0
+    - _IBLCubeRotationX: 0
+    - _IBLCubeRotationZ: 0
+    - _LightIntensityMode: 0
+    - _MaskOn: 1
+    - _Metallic: 0
+    - _Metalness: 0.725
+    - _Mode: 0
+    - _NormalOn: 1
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _PunctualLightSpecularExposure: 1
+    - _ReflectFactor: 0.08
+    - _ReflectMode: 0
+    - _ReflectPower: 2.77
+    - _RenderMode: 0
+    - _Rim: 0.366
+    - _RimExp: 10
+    - _RimFactor: 1
+    - _RimPower: 0
+    - _Roughness: 1
+    - _SHExposure: 0.53
+    - _ShadowNormalBias: 0.01
+    - _SideLightPower: 0
+    - _SkinBackLitIntensity: 0.35
+    - _SkinBackLitPower: 4
+    - _SkinEnvExposure: 1
+    - _SkinPunctualLightSpecularExposure: 0.5
+    - _SkinSSSTransmission: 0.866
+    - _SkinSSSfresnelMask: 0.628
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SpecularMaskFactor: 0
+    - _SpecularScale: 1.2
+    - _SrcBlend: 1
+    - _StatueDegree: 0
+    - _UVSec: 0
+    - _ZWrite: 1
+    - _envBDRFFactor: 0.09
+    m_Colors:
+    - _AnisotropyColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BlinkColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ClipRange: {r: 0, g: 0, b: 0, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DirLightColor: {r: 1, g: 1, b: 1, a: 0}
+    - _EmissionCol: {r: 0.448, g: 0.591, b: 0.662, a: 0}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _FakeENV: {r: 1, g: 1, b: 1, a: 1}
+    - _FakeSH: {r: 0.66, g: 0.66, b: 0.66, a: 1}
+    - _FlowColor: {r: 0.63529414, g: 0.7137255, b: 1, a: 1}
+    - _FlowSpeed: {r: -0.05, g: 0.1, b: 0.15, a: 3.5}
+    - _RimColor: {r: 0.4669811, g: 0.710564, b: 1, a: 1}
+    - _SelfShadowColor: {r: 0, g: 0.23, b: 0.54, a: 1}
+    - _SideLightColor: {r: 0.55, g: 0.65, b: 1, a: 1}
+    - _SideLightDir: {r: -0.55, g: 0.45, b: 0.7, a: 0}
+    - _SkinFakeENV: {r: 1, g: 1, b: 1, a: 1}
+    - _SkinSSSScatterColor: {r: 1, g: 0.3161765, b: 0.3161765, a: 0}
+    - _SkinShadowColor: {r: 1, g: 0.85, b: 0.8, a: 1}
+    - _SkinSpecularColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
