@@ -1,0 +1,8 @@
+# Unity YAML 合并驱动（与 YAML 资源多人协作时减少冲突，需在 git config 中注册 unityyamlmerge）
+*.unity merge=unityyamlmerge
+*.prefab merge=unityyamlmerge
+*.asset merge=unityyamlmerge
+*.meta merge=unityyamlmerge
+*.mat merge=unityyamlmerge
+*.anim merge=unityyamlmerge
+*.controller merge=unityyamlmerge
