@@ -8,13 +8,15 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: changerole_01
-  m_Shader: {fileID: 4800000, guid: c2fe79e32dc00164fbc273154fcf90ee, type: 3}
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ANISOTROPICMODE_ON
+  - _METALLICGLOSSMAP
+  - _NORMALMAP
   m_InvalidKeywords:
   - _ANISOTROPICMODE_NONE
+  - _ANISOTROPICMODE_ON
   - _BuffOn
   - _EDITEMISSIVE_ON
   - _FlowOn
@@ -35,7 +37,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 741048e340718474ab4fa73f78b41714, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -83,7 +85,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: ffbfbc2a225165047848b1d70db35551, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MiscelTex:
@@ -146,7 +148,7 @@ Material:
     - _EnvExposure: 1
     - _FlowOn: 1
     - _FlowValue: 1
-    - _GlossMapScale: 1
+    - _GlossMapScale: 0.568
     - _Glossiness: 0
     - _GlossyReflections: 1
     - _HalfLambert: 0

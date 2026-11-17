@@ -1,0 +1,24 @@
+{
+    "FolderReMeshConfigs": [
+        {
+            "FolderPath": "Roles",
+            "MaxTriangles": 4000,
+            "IgnoreFBXFiles": []
+        },
+        {
+            "FolderPath": "Equip",
+            "MaxTriangles": 200,
+            "IgnoreFBXFiles": []
+        },
+        {
+            "FolderPath": "Scenes",
+            "MaxTriangles": 200,
+            "IgnoreFBXFiles": []
+        },
+        {
+            "FolderPath": "Effect",
+            "MaxTriangles": 200,
+            "IgnoreFBXFiles": []
+        }
+    ]
+}

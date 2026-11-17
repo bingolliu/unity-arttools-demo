@@ -8,56 +8,25 @@
 
 | 工具 | 菜单入口 | 用途 |
 | --- | --- | --- |
-| 模型减面 | **Tools > 模型 > 减面工具入口** | 调用 InstaLOD 对模型做 LOD 减面，并同步更新预制体 |
-| PSD 转预制体 | **Tools > PSD to Prefab** | 解析 PSD 图层结构，生成 NGUI 预制体（需自备 NGUI） |
-| LOD 预制体创建 | **Assets > Create LOD Prefab**（右键预制体） | 用已生成的 LOD 网格替换预制体中的网格与 Avatar |
-| 命令行输出窗口 | 由减面工具内部调用 | 在编辑器内实时显示外部命令的输出与进度 |
+| 模型减面 | **Tools > 模型 > 减面工具入口** | 在编辑器内用 UnityMeshSimplifier 做 LOD 减面，并同步更新预制体 |
+| PSD 转预制体 | **Tools > PSD to Prefab** | 解析 PSD 图层结构，生成 uGUI + TextMeshPro 预制体 |
+| LOD 预制体创建 | **Assets > Create LOD Prefab**（右键预制体） | 用外部已生成的 `_Lod1.fbx` 替换预制体中的网格与 Avatar |
 
 ## 环境要求
 
 - Unity `2022.3.62f2`（LTS）
-- Windows（减面工具通过 `cmd.exe` 调用命令行程序，暂不支持其他平台）
+- 无需 Windows 命令行环境，减面在编辑器内完成
 
-## 第三方组件安装
+## 开源替代关系
 
-为遵守第三方授权并控制仓库体积，以下内容**不在仓库中**（`.gitignore` 已排除），克隆后需自行放入对应位置：
+原先依赖的两个付费插件已替换为免费/开源方案，**不再需要 InstaLOD 或 NGUI**：
 
-| 组件 | 放置位置 | 来源 |
-| --- | --- | --- |
-| InstaLOD Pipeline | `tool/InstaLODPipeline/` | InstaLOD 官方，商业授权 |
-| NGUI | `Assets/Addons/NGUI/` | Unity Asset Store 付费插件，版本 `2023.08.01` |
+| 原付费组件 | 替代方案 | 授权 | 说明 |
+| --- | --- | --- | --- |
+| InstaLOD Pipeline | [UnityMeshSimplifier](https://github.com/Whinarn/UnityMeshSimplifier) `3.1.1` | MIT | 已 vendor 到 `Assets/Addons/UnityMeshSimplifier/`，纯 C#、编辑器内运行，无需外部 exe |
+| NGUI | Unity uGUI + TextMeshPro | Unity 随附 | `com.unity.ugui` 为工程已有依赖，TMP 通过 `Packages/manifest.json` 引入 |
 
-其余内容（编辑器工具脚本、LitJson、演示模型与预制体、InstaLOD 工具面板配置）均已包含。
-
-### 安装 InstaLOD Pipeline
-
-1. 从 InstaLOD 官方获取 InstaLOD Pipeline（`InstaLODCmd` 命令行版），并按官方说明完成授权/激活。`tool/InstaLODPipeline/GettingStarted.txt` 只指向在线文档，激活方式与命令行参数以该文档为准。
-2. 把**整个**发行目录放到工程根的 `tool/InstaLODPipeline/`，至少包含：
-
-   ```text
-   tool/InstaLODPipeline/
-     InstaLODCmd.exe                 # 工具通过它执行减面
-     Profiles/Optimize_SESC.json     # 减面参数 Profile，工具会写入该文件
-     Data/  Images/  Python/  ...    # 运行时资源与同目录 DLL，需一并拷贝
-   ```
-
-3. `Profiles/Optimize_SESC.json` 必须存在且可写：每次执行都会把界面上的参数回写其中的 `MeshOperation.Entries[0].Settings.PercentTriangles` / `AbsoluteTriangles`（见 `InstaLODToolsManager.UpdateJsonData`），缺失会直接报错。若发行包里只有 `Optimize.json`，用 InstaLOD Pipeline 打开它另存为 `Optimize_SESC`，**文件名保持 `Optimize_SESC.json`**。
-4. 路径不可改名：`Assets/Addons/InstaLODTools/Script/InstaLODToolsConst.cs` 把管线目录固定为 `{工程根}\tool\InstaLODPipeline`，实际执行的命令形如：
-
-   ```bat
-   cd <工程根>\tool\InstaLODPipeline && InstaLODCmd -profile Profiles\Optimize_SESC.json -file <输入fbx> <输出fbx> <配置名>
-   ```
-
-5. 验证：打开 **Tools > 模型 > 减面工具入口**，对演示模型执行一次，命令窗口应滚动显示 InstaLOD 的实时输出。若提示 `'InstaLODCmd' 不是内部或外部命令`，说明 exe 不在上述目录（工具不会预检文件是否存在，而是把失败信息打印在命令窗口里）。
-
-### 安装 NGUI
-
-1. 从 Unity Asset Store 获取 **NGUI: Next-Gen UI kit**，版本需为 `2023.08.01`。演示预制体按 GUID 引用 NGUI 的 `UIFont` / `UIAtlas` 脚本（`Assets/Res/Font/YaHei.prefab`、`Assets/Res/ComAtlas/Fantasy Demo Atlas.prefab`），只有同版本 Asset Store 包（自带 `.meta`）的 GUID 才能对上；用其它版本或手动拼装的库会出现 Missing Script。
-2. 把包内的 NGUI 目录整体放到 `Assets/Addons/NGUI/`，目录名与层级不要改，确认 `Assets/Addons/NGUI/Scripts/UI/UIFont.cs` 存在。PSD 工具与提示文案都按该路径查找/说明。
-3. 启用 PSD 工具：**Edit > Project Settings > Player > Other Settings > Scripting Define Symbols** 添加 `NGUI_AVAILABLE`，等待重新编译。未定义该符号时，`Tools > PSD to Prefab` 仍然存在，但只会弹窗提示需要 NGUI，不影响其他工具与整个工程编译。
-4. 验证：**Tools > PSD to Prefab** 能打开窗口并加载 PSD、预览图层，即表示 NGUI 已生效。
-
-> 本工程自制的 UI 预制体集合位于 `Assets/Addons/NGUI/SRSC_UIHelper/`，会随 NGUI 目录一起被 `.gitignore` 排除。如果希望它随仓库分发，需要先移到该目录之外（例如 `Assets/Addons/SRSC_UIHelper/`）再提交；当前仓库内的工具与演示资源都没有引用它，缺失不影响运行。
+> 本机原有的 `tool/InstaLODPipeline/`（约 350 MB）与 `Assets/Addons/NGUI/`（约 24 MB）已移动到根目录的 `_Deprecated_Plugins/`（`.gitignore` 已排除），不再参与编译；确认不再需要后可直接删除该目录。
 
 ## 快速开始
 
@@ -65,8 +34,8 @@
 git clone https://github.com/bingolliu/unity-arttools-demo.git
 ```
 
-1. 用 Unity `2022.3.62f2` 打开工程根目录，等待资源导入完成。
-2. （可选）按「[第三方组件安装](#第三方组件安装)」放入 InstaLOD Pipeline 与 NGUI；只用 LOD 预制体工具与命令窗口时无需安装。
+1. 用 Unity `2022.3.62f2` 打开工程根目录，等待包解析与资源导入完成。
+2. 工程已包含 TMP Essential Resources（`Assets/TextMesh Pro`），一般无需再导入；若该目录被删除，执行 **Tools > PSD to Prefab > 导入 TMP Essential Resources** 重新导入即可。PSD 工具会用 `Assets/Font/YaHei.TTF` 自动生成 `Assets/Res/Font/YaHei SDF.asset`（动态图集），也可点击窗口中的“生成 YaHei 字体资源”按钮手动生成。
 3. 打开减面工具（**Tools > 模型 > 减面工具入口**）或 PSD 工具（**Tools > PSD to Prefab**）。
 4. 使用自带的演示资源试跑一遍，确认流程后再替换为自己的资源。
 
@@ -75,16 +44,17 @@ git clone https://github.com/bingolliu/unity-arttools-demo.git
 - 角色预制体：`Assets/Res/Roles/ChangeRole/changerole_01.prefab`
 - 角色模型与贴图：`Assets/Roles/changerole/changerole_01`（FBX、材质、贴图、Animator Controller）
 - 角色动画：`Assets/Res/Animations/changerole_01`
-- 字体预制体（含 `UIFont`，需 NGUI）：`Assets/Res/Font/YaHei.prefab`
-- 演示 Atlas 预制体（需 NGUI）：`Assets/Res/ComAtlas/Fantasy Demo Atlas.prefab`
+- 字体源文件：`Assets/Font/YaHei.TTF`（用于生成 TMP 字体资源）
 
 ## 模型减面
 
 ### 目录约定
 
-工具依据 FBX 所在的顶层目录判断资源类型，并按固定规则寻找对应预制体。使用前请把资源放到下列目录中：
+减面**直接使用预制体上引用的网格**（`MeshFilter.sharedMesh` / `SkinnedMeshRenderer.sharedMesh`），不要求网格位于任何固定目录，也不需要事先准备网格副本。
 
-| 类型 | FBX 目录 | 预制体目录 |
+目录约定只用于决定 `MaxTriangles` 阈值，优先级为：预制体所在目录 > 网格所在目录 > 默认 200 面。
+
+| 类型 | 模型目录 | 预制体目录 |
 | --- | --- | --- |
 | 角色 | `Assets/Roles` | `Assets/Res/Roles` |
 | 装备 | `Assets/Equip` | `Assets/Res/Equip` |
@@ -93,95 +63,135 @@ git clone https://github.com/bingolliu/unity-arttools-demo.git
 
 ### 使用步骤
 
-1. 打开 **Tools > 模型 > 减面工具入口**，工具会自动打开 `Assets/Addons/InstaLODTools/Scene/InstaLODToolsScene.unity` 场景。
+1. 打开 **Tools > 模型 > 减面工具入口**。
 2. 选择减面模式：
-   - **百分比减面**：按目标百分比缩减面数（滑块 0–100）。
+   - **百分比减面**：保留目标比例的三角面（滑块 1–100）。
    - **目标面数减面**：直接指定减面后的目标三角面数。
 3. 选择处理方式：
    - **多预制减面**：把预制体拖入列表，逐个处理。
    - **文件夹减面**：勾选需要处理的文件夹，按配置的三角面阈值批量处理。
-4. 按需勾选附加选项：
-   - **自动替换Prefab的Mesh**：用减面结果替换预制体上对应的网格。
-   - **生成LOD预制体**：在预制体所在目录生成 `_LOD1` 预制体。
-   - **覆盖源文件**：用减面结果覆盖原始 FBX（首次试用建议保持关闭）。
-5. 点击执行，工具栏会通过命令窗口显示 InstaLOD 的实时输出；结束后资源会自动刷新。
+4. 按需勾选输出选项：
+   - **替换源预制体网格**：用减面结果替换原预制体上的网格。
+   - **生成 _LOD1 预制体**：在预制体同级目录生成 `{预制体名}_LOD1.prefab`。
+   - 两者都不勾选时，只生成减面网格资产。
+5. 点击执行，处理进度显示在 Unity 进度条；结束后资产自动保存，结果同时输出到 Console。
 
 ### 输出结果
 
-- LOD 网格：`{FBX所在目录}_LOD1/{FBX名}_LOD1.fbx`
-- 网格资源：输出到与 FBX 同级的 `Mesh` 目录（`Effect` 类型输出到 `Effect/Mesh`）
+- 减面网格：`{模型文件}_LOD1/Mesh/{网格名}_ReMesh.asset`（FBX 取其所在目录与文件名，如 `Assets/Roles/changerole/changerole_01/changerole_01.FBX` → `Assets/Roles/changerole/changerole_01/changerole_01_LOD1/Mesh`）；若预制体已引用减面结果，则就地覆盖，不再嵌套新目录
 - LOD 预制体（可选）：`{原预制体名}_LOD1.prefab`，位于原预制体同级目录
+- 网格替换时保留骨骼、Bindpose、骨骼名字哈希（兼容 `Optimize Game Objects`）、Avatar、材质与子网格结构，因此不会像 FBX 往返流程那样破坏 Humanoid Avatar
+- 若源渲染器本身没有 `bones`（本演示模型就是这种精简预制体），会先**从模型资产( FBX )烘焙蒙皮姿态**再减面，输出纯静态网格（无骨骼权重、无 bindposes）：既不会触发 `Bones do not match bindpose` / `Bone index is not within the number of bones`，姿态与朝向也与原模型一致
 
 ### 相关配置
 
 | 文件 | 作用 |
 | --- | --- |
-| `tool/InstaLODPipeline/Profiles/Optimize_SESC.json` | InstaLOD Pipeline 的处理 Profile，工具执行时会把当前减面参数写回该文件（随 InstaLOD 一起提供） |
-| `Assets/Addons/InstaLODTools/Config/InstaLODToolsFolderConfig.json` | 按文件夹配置三角面阈值（`MaxTriangles`）与需要跳过的 FBX（`IgnoreFBXFiles`） |
-| `Assets/Addons/InstaLODTools/Script/InstaLODToolsConst.cs` | 目录映射、Profile 名称、输出路径等常量 |
+| `Assets/Addons/MeshOptimizer/Config/MeshOptimizerFolderConfig.json` | 按文件夹配置三角面阈值（`MaxTriangles`）与需要跳过的模型（`IgnoreFBXFiles`，按文件名匹配） |
+| `Assets/Addons/MeshOptimizer/Editor/MeshOptimizerPaths.cs` | 目录映射、`_LOD1` 命名、生成物识别等常量 |
+| `Assets/Addons/MeshOptimizer/Editor/MeshOptimizerService.cs` | 减面流程：收集预制体引用的网格、临时开启 Read/Write、简化网格、写入资产、替换网格/生成预制体，结束后恢复模型导入设置 |
 
-> 减面能力由 InstaLOD Pipeline 提供，该程序与数据受 InstaLOD 自身许可协议约束，请自行获取并遵循其许可要求。
+> 减面算法为 Fast Quadric Edge Collapse（UnityMeshSimplifier，MIT）。质量与 InstaLOD 的 Smart_v2 不完全等价；如对减面质量有硬性要求，可在 `MeshOptimizerService` 中扩展其它后端。处理带 BlendShape 的角色时，UnityMeshSimplifier 会保留 Blendshape 数据。
+
+### 常见问题：蒙皮与 bindpose
+
+模型使用 **Optimize Game Objects** 导入时，`SkinnedMeshRenderer.bones` 为空，Unity 依赖网格里的 `m_BoneNameHashes` 把 `bindposes` 映射到 Avatar。当前工具按以下规则处理：
+
+- 渲染器仍有骨骼：把源网格的 `m_BoneNameHashes` / `m_RootBoneNameHash` 一并拷贝到 `_ReMesh.asset`，保持可蒙皮；
+- `bones` 为 0 的精简预制体（本演示模型即此类）：FBX 里的顶点处于 bind pose 空间，直接当静态网格用会**躺倒/朝向错误**，所以先用模型自带的预制体实例 `BakeMesh` 烘焙成当前姿态，再减面，并清空骨骼权重与 `bindposes`，最终得到干净的静态网格。
+- 由于走了烘焙流程，这类模型的 BlendShape 无法保留；需要表情动画时请保留骨骼渲染器，不要替换为减面网格。
+
+常见报错与对应原因：
+
+| 报错 | 原因 | 处理 |
+| --- | --- | --- |
+| `Bones do not match bindpose.` | 骨骼数量与 bindpose 数量不一致（精简预制体 + 带 bindpose 的网格） | 重新执行一次减面（生成烘焙后的静态网格） |
+| `Bone index is not within the number of bones.` | 网格保留了骨骼权重但 bindpose 被清空 | 已修复：先清权重再清 bindpose，并对无骨骼渲染器走烘焙流程 |
+
+再次执行减面即可覆盖旧的 `_ReMesh.asset`。如果之前勾选过“替换源预制体网格”，请先用 Undo 或版本管理恢复源预制体的原始网格，再重新执行。
+
+> 本演示工程中源预制体 `changerole_01.prefab` 直接引用原始 FBX 内的网格（`Optimize Game Objects` 导入，`bones` 为空、`bindposes` 为 44），因此源预制体本身在 Inspector 里仍可能提示该警告；减面生成的 `_ReMesh.asset` 与 `_LOD1.prefab` 是干净的静态网格（`bindposes = 0`），不会报错。如需源预制体也不再提示，勾选一次“替换源预制体网格”，源预制体就会指向 `_ReMesh`。
+>
+> 如果预制体显示 `Missing` 网格（`sharedMesh == null`），工具会打印“预制体有 N 个渲染器的网格引用为空”，不会再误报“没有需要减面的网格”。
+
+### 常见问题：`ObjectDisposedException: Stream has been closed`（Search 索引）
+
+报错栈来自 `UnityEditor.Search.PropertyDatabaseFileStoreView.Dispose`，发生在 `SearchMonitor.InvalidateDocuments` 的去抖回调里：
+
+1. 工具执行完会触发资产数据库变更，Unity 的 Search 索引随之做一次 `InvalidateDocuments`；
+2. 如果 `Library/Search/propertyDatabase.db` 已损坏（表现为文件只有几个字节），关闭旧索引视图时就会抛这个异常。
+
+处理方式：
+
+- 代码侧：减面结束后不再调用 `AssetDatabase.Refresh()`，只做 `AssetDatabase.SaveAssets()`，避免每执行一次都触发全量导入流水线；
+- 工程侧：退出 Unity，删除 `Library/Search` 目录（至少删除 `propertyDatabase.db*`、`propertyAliases.db*`），重新打开工程让索引重建。
+
+该错误不影响减面结果，属于 Unity 自身的索引缓存问题。
 
 ## PSD 转预制体
 
-> 前置条件：已放入 NGUI 并定义 `NGUI_AVAILABLE`（见「[第三方组件安装](#第三方组件安装)」）。
+前置条件：已导入 TMP Essential Resources（或在窗口中点击导入按钮）。
 
 1. 打开 **Tools > PSD to Prefab**。
-2. 选择 PSD 文件并点击 **Load PSD and Parse Layers**，工具会读取画布尺寸、图层结构与文本信息。
-3. 配置资源引用：
-   - **Font Prefab**：用于文本图层的 `UIFont` 预制体（默认 `Assets/Res/Font/YaHei.prefab`）。
-   - **Default Atlas Prefab**（可选）：为未单独指定的图层统一使用的 Atlas 预制体。
+2. 选择 PSD 文件并点击 **加载并解析图层**，工具会读取画布尺寸、图层结构与文本信息。
+3. 配置字体与默认资源：
+   - **TMP 字体资源**：默认使用 `Assets/Res/Font/YaHei SDF.asset`，缺失时自动从 `Assets/Font/YaHei.TTF` 生成。
+   - **默认 Sprite 文件夹 / 默认 Texture 文件夹**：用于按图层名自动匹配资源。
 4. 逐图层指定图片来源：
-   - **Texture**：使用纹理资源。
-   - **Atlas**：从 NGUI Atlas 中选择 Sprite。
-5. 点击 **预览** 在场景中查看还原效果，确认无误后点击 **Generate Prefab** 并选择保存路径。
+   - **Sprite**：生成 `uGUI Image`，适合图集/Sprite 资源。
+   - **Texture**：生成 `uGUI RawImage`，适合普通纹理。
+5. 点击 **预览** 在场景中查看还原效果，确认无误后点击 **生成预制体** 并选择保存路径。
 
-生成的预制体使用 NGUI 的运行时组件，因此需要 NGUI 代码与资源；解析与图层结构读取部分不依赖 NGUI，可单独复用。
+文本图层映射为 `TextMeshProUGUI`：PSD 的字号、颜色、对齐、粗体/斜体、渐变、描边与投影都会尽量还原；描边/投影通过共享 TMP 材质实现，材质生成在 `Assets/Addons/PsdParser/Generated/Materials/`。
+
+> 旧版本的 `Assets/Res/Font/YaHei.prefab`（UIFont）与 `Assets/Res/ComAtlas/Fantasy Demo Atlas.prefab`（UIAtlas）已随 NGUI 依赖移除。需要图集资源时，直接把 Sprite 放到 `Assets/Res/ComAtlas` 或通过窗口指定即可。
 
 ## 辅助工具
 
 ### Create LOD Prefab
 
-在 Project 窗口中右键选中一个预制体，选择 **Assets > Create LOD Prefab**，即可基于已有的 LOD 网格生成 LOD 版本预制体。
+在 Project 窗口中右键选中一个预制体，选择 **Assets > Create LOD Prefab**，即可基于外部已准备好的 LOD 网格生成 LOD 版本预制体。
 
 - 前置条件：预制体同名 FBX 存在，且已有 `{FBX所在目录}_LOD1/{FBX名}_Lod1.fbx`
-- 处理内容：复制原预制体为 `{预制体名}_LOD1.prefab`，并按顺序替换其中的 `SkinnedMeshRenderer` / `MeshFilter` 网格，同时同步 `Animator` 的 Avatar
-- 减面工具的“生成LOD预制体”选项即调用此逻辑
-
-### CommandWindow
-
-`Assets/Editor/Tools/CommandWindow.cs` 提供一个通用的编辑器命令窗口：把命令行交给 `cmd.exe` 执行，实时滚动显示标准输出与错误输出，并支持结束回调。适合包装任意 CLI 工具，让美术在编辑器内直接看到执行进度。
+- 处理内容：复制原预制体为 `{预制体名}_LOD1.prefab`，按顺序替换其中的 `SkinnedMeshRenderer` / `MeshFilter` 网格，并同步 `Animator` 的 Avatar
+- 该工具独立于被移除的 InstaLOD，可继续配合第三方 DCC 导出的 LOD FBX 使用
 
 ## 目录结构
 
 ```text
 Assets/
   Addons/
-    InstaLODTools/    减面工具：编辑器窗口、配置、执行管理与演示场景
-    PsdParser/        PSD 解析与转预制体工具
-    Components/       LitJson 等公共依赖
-    NGUI/             需自行准备（仓库不含）
+    MeshOptimizer/        减面工具：编辑器窗口、配置、UnityMeshSimplifier 后端
+    UnityMeshSimplifier/  MIT 授权的减面库（vendor，含 LICENSE）
+    PsdParser/            PSD 解析与 uGUI/TMP 预制体生成
+    Components/           LitJson 等公共依赖
   Editor/
-    LODTool/          LOD 预制体创建工具
-    Tools/            命令窗口等编辑器辅助工具
-  Roles/              角色 FBX、材质、贴图、动画控制器
+    LODTool/              LOD 预制体创建工具
+  Roles/                  角色 FBX、材质、贴图、动画控制器
   Equip/  Scenes/  Effect/   其他类型的模型资源目录
   Res/
-    Roles/            角色预制体
-    ComAtlas/         Atlas 预制体（需 NGUI）
-    Font/             字体预制体（需 NGUI）
-    Animations/       动画资源
-  Font/               字体文件
-  UITex/ UITexLang/   UI 贴图资源
-tool/
-  InstaLODPipeline/   需自行准备（仓库不含）：InstaLOD 命令行程序与 Profile
-Packages/             Unity 包清单
-ProjectSettings/      Unity 工程设置
+    Roles/                角色预制体
+    ComAtlas/             Sprite/图集资源目录
+    Font/                 TMP 字体资源（自动生成 YaHei SDF.asset）
+    Animations/           动画资源
+  Font/                   字体源文件（YaHei.TTF）
+  TextMesh Pro/           TMP Essential Resources（随工程提供）
+  UITex/ UITexLang/       UI 贴图资源
+Packages/                 Unity 包清单（ugui + textmeshpro）与 packages-lock.json
+ProjectSettings/          Unity 工程设置
 ```
+
+## 更新记录
+
+- **去 InstaLOD / NGUI 依赖**：减面改为编辑器内 `UnityMeshSimplifier`，PSD 转预制体改为 uGUI + TextMeshPro；删除 `Assets/Addons/InstaLODTools`、`Assets/Editor/Tools/CommandWindow.cs` 与两个 NGUI 图集/字体预制体。
+- **减面工具直接使用预制体引用的网格**：不再要求网格位于固定目录，也不再需要预先准备网格副本；阈值按“预制体目录 > 网格目录 > 默认 200 面”匹配。
+- **修复蒙皮兼容问题**：`Bones do not match bindpose` 与 `Bone index is not within the number of bones` 均已处理，无骨骼渲染器会先烘焙蒙皮姿态，LOD 网格姿态与朝向和原模型一致。
+- **减面结束不再调用 `AssetDatabase.Refresh()`**：避免触发全量导入导致 Unity Search 索引抛 `ObjectDisposedException`。
 
 ## 说明
 
 - 本工程是工具演示用途的独立示例，不包含完整业务逻辑，仅保留运行各项工具所需的代码与资源。
-- `.gitignore` 已排除 `Library/`、构建产物等 Unity 生成目录，以及「[第三方组件安装](#第三方组件安装)」中的 InstaLOD Pipeline、NGUI。
-- 减面工具依赖 Windows 命令行环境与固定的目录约定；如需接入新的资源类型，请扩展 `InstaLODToolsConst` 中的目录映射与 `FolderType` 枚举。
-- 覆盖源文件前建议先提交或备份资源，避免不可逆的修改。
+- `.gitignore` 已排除 `Library/`、构建产物等 Unity 生成目录，以及历史遗留的 `_Deprecated_Plugins/`、`tool/`、`Assets/Addons/NGUI/` 目录。
+- 减面与 PSD 工具的产物（`*_LOD1/`、`*_LOD1.prefab`、`Assets/Addons/PsdParser/Editor/Generated/`）同样不入库，克隆工程后跑一遍工具即可生成。
+- 减面工具只按目录约定取阈值；如需为新资源类型配置阈值，请扩展 `MeshOptimizerPaths.PrefabFolders` / `SourceFolders` 与 `FolderKind` 枚举，以及 `MeshOptimizerFolderConfig.json`。
+- 修改源预制体前建议先提交或备份资源，避免不可逆的修改。

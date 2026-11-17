@@ -40,12 +40,10 @@ namespace PsdParser
         public PsdGradientEffect gradient;
 
         // --- 用户配置的资源分配 ---
-        public ImageSourceType imageSource = ImageSourceType.TextureFolder; // Atlas 或 TextureFolder
-#if NGUI_AVAILABLE
-        public UIAtlas assignedAtlas;
-#endif
+        public ImageSourceType imageSource = ImageSourceType.Texture;
         public string spriteName;
         public Texture assignedTexture;
+        public Sprite assignedSprite;
 
         /// <summary>
         /// 获取图层中心点（PSD 坐标系）
@@ -57,23 +55,20 @@ namespace PsdParser
         }
 
         /// <summary>
-        /// 转换为 NGUI 坐标（画布中心对齐到 NGUI(0,0)）
-        /// PSD 原点(0,0)在左上角，NGUI(0,0)通常是屏幕中心
-        /// 将 PSD 画布中心(psdWidth/2, psdHeight/2)映射到 NGUI(0,0)
+        /// 转换为 uGUI 坐标（画布中心对齐到 (0,0)）
+        /// PSD 原点(0,0)在左上角，uGUI 以中心为原点、Y 轴向上。
         /// </summary>
-        public Vector3 GetNguiPosition(float psdHeight, float psdWidth)
+        public Vector3 GetCanvasPosition(float psdHeight, float psdWidth)
         {
-            // PSD 图层中心点（PSD坐标系，Y向下）
-            float centerX_psd = bounds.x + bounds.width / 2;
-            float centerY_psd = bounds.y - bounds.height / 2;  // bounds.y是bottom，中心点要减去height/2
+            // PSD 图层中心点（PSD 坐标系，Y 向下）
+            float centerXPsd = bounds.x + bounds.width / 2;
+            float centerYPsd = bounds.y - bounds.height / 2; // bounds.y 是 bottom，中心点要减去 height/2
 
-            // 转换到 NGUI：PSD画布中心对应NGUI(0,0)
-            // NGUI X = centerX_psd - psdWidth/2
-            // NGUI Y = psdHeight/2 - centerY_psd（Y轴反转）
-            float nguiX = centerX_psd - psdWidth / 2;
-            float nguiY = psdHeight / 2 - centerY_psd;
+            // 将 PSD 画布中心映射到 uGUI(0,0)
+            float canvasX = centerXPsd - psdWidth / 2;
+            float canvasY = psdHeight / 2 - centerYPsd;
 
-            return new Vector3(nguiX, nguiY, 0);
+            return new Vector3(canvasX, canvasY, 0);
         }
     }
 
@@ -154,8 +149,8 @@ namespace PsdParser
     /// </summary>
     public enum ImageSourceType
     {
-        Atlas,          // 从 UIAtlas 获取 Sprite
-        TextureFolder   // 从文件夹获取 Texture
+        Sprite,   // uGUI Image
+        Texture   // uGUI RawImage
     }
 
     /// <summary>

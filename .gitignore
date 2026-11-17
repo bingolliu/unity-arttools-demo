@@ -41,7 +41,16 @@ desktop.ini
 # 本地临时日志
 .ghauth.log*
 
-# 第三方商业组件：未包含在本仓库中，需自行准备（详见 README）
+# 历史遗留：InstaLOD / NGUI 已不再被工程引用，可安全删除本地副本
+/_Deprecated_Plugins/
 /tool/
 /Assets/Addons/NGUI/
 /Assets/Addons/NGUI.meta
+
+# 减面工具生成物：随时可用 Tools > 模型 > 减面工具入口 重新生成
+*_LOD1/
+*_LOD1.meta
+*_LOD1.prefab
+*_LOD1.prefab.meta
+/Assets/Addons/PsdParser/Editor/Generated/
+/Assets/Addons/PsdParser/Editor/Generated.meta
