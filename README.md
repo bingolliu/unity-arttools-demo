@@ -18,18 +18,46 @@
 - Unity `2022.3.62f2`（LTS）
 - Windows（减面工具通过 `cmd.exe` 调用命令行程序，暂不支持其他平台）
 
-### 需自行准备的第三方组件
+## 第三方组件安装
 
-为遵守第三方授权并控制仓库体积，以下内容**不在仓库中**，克隆后需自行放入对应位置：
+为遵守第三方授权并控制仓库体积，以下内容**不在仓库中**（`.gitignore` 已排除），克隆后需自行放入对应位置：
 
-| 组件 | 放置位置 | 说明 |
+| 组件 | 放置位置 | 来源 |
 | --- | --- | --- |
-| InstaLOD Pipeline | `tool/InstaLODPipeline` | 商业授权工具，含超过 100MB 的二进制文件；需自行获取并按配置放好 `InstaLODCmd.exe`、`Profiles/` 等 |
-| NGUI | `Assets/Addons/NGUI` | Unity Asset Store 付费插件；放入后还需启用 PSD 工具（见下） |
+| InstaLOD Pipeline | `tool/InstaLODPipeline/` | InstaLOD 官方，商业授权 |
+| NGUI | `Assets/Addons/NGUI/` | Unity Asset Store 付费插件，版本 `2023.08.01` |
 
 其余内容（编辑器工具脚本、LitJson、演示模型与预制体、InstaLOD 工具面板配置）均已包含。
 
-**启用 PSD 工具**：NGUI 就位后，打开 **Edit > Project Settings > Player > Other Settings > Scripting Define Symbols**，添加 `NGUI_AVAILABLE`，等待重新编译即可。未定义该符号时，`Tools > PSD to Prefab` 仍存在，但只会提示需要 NGUI，不影响其他工具与整个工程编译。
+### 安装 InstaLOD Pipeline
+
+1. 从 InstaLOD 官方获取 InstaLOD Pipeline（`InstaLODCmd` 命令行版），并按官方说明完成授权/激活。`tool/InstaLODPipeline/GettingStarted.txt` 只指向在线文档，激活方式与命令行参数以该文档为准。
+2. 把**整个**发行目录放到工程根的 `tool/InstaLODPipeline/`，至少包含：
+
+   ```text
+   tool/InstaLODPipeline/
+     InstaLODCmd.exe                 # 工具通过它执行减面
+     Profiles/Optimize_SESC.json     # 减面参数 Profile，工具会写入该文件
+     Data/  Images/  Python/  ...    # 运行时资源与同目录 DLL，需一并拷贝
+   ```
+
+3. `Profiles/Optimize_SESC.json` 必须存在且可写：每次执行都会把界面上的参数回写其中的 `MeshOperation.Entries[0].Settings.PercentTriangles` / `AbsoluteTriangles`（见 `InstaLODToolsManager.UpdateJsonData`），缺失会直接报错。若发行包里只有 `Optimize.json`，用 InstaLOD Pipeline 打开它另存为 `Optimize_SESC`，**文件名保持 `Optimize_SESC.json`**。
+4. 路径不可改名：`Assets/Addons/InstaLODTools/Script/InstaLODToolsConst.cs` 把管线目录固定为 `{工程根}\tool\InstaLODPipeline`，实际执行的命令形如：
+
+   ```bat
+   cd <工程根>\tool\InstaLODPipeline && InstaLODCmd -profile Profiles\Optimize_SESC.json -file <输入fbx> <输出fbx> <配置名>
+   ```
+
+5. 验证：打开 **Tools > 模型 > 减面工具入口**，对演示模型执行一次，命令窗口应滚动显示 InstaLOD 的实时输出。若提示 `'InstaLODCmd' 不是内部或外部命令`，说明 exe 不在上述目录（工具不会预检文件是否存在，而是把失败信息打印在命令窗口里）。
+
+### 安装 NGUI
+
+1. 从 Unity Asset Store 获取 **NGUI: Next-Gen UI kit**，版本需为 `2023.08.01`。演示预制体按 GUID 引用 NGUI 的 `UIFont` / `UIAtlas` 脚本（`Assets/Res/Font/YaHei.prefab`、`Assets/Res/ComAtlas/Fantasy Demo Atlas.prefab`），只有同版本 Asset Store 包（自带 `.meta`）的 GUID 才能对上；用其它版本或手动拼装的库会出现 Missing Script。
+2. 把包内的 NGUI 目录整体放到 `Assets/Addons/NGUI/`，目录名与层级不要改，确认 `Assets/Addons/NGUI/Scripts/UI/UIFont.cs` 存在。PSD 工具与提示文案都按该路径查找/说明。
+3. 启用 PSD 工具：**Edit > Project Settings > Player > Other Settings > Scripting Define Symbols** 添加 `NGUI_AVAILABLE`，等待重新编译。未定义该符号时，`Tools > PSD to Prefab` 仍然存在，但只会弹窗提示需要 NGUI，不影响其他工具与整个工程编译。
+4. 验证：**Tools > PSD to Prefab** 能打开窗口并加载 PSD、预览图层，即表示 NGUI 已生效。
+
+> 本工程自制的 UI 预制体集合位于 `Assets/Addons/NGUI/SRSC_UIHelper/`，会随 NGUI 目录一起被 `.gitignore` 排除。如果希望它随仓库分发，需要先移到该目录之外（例如 `Assets/Addons/SRSC_UIHelper/`）再提交；当前仓库内的工具与演示资源都没有引用它，缺失不影响运行。
 
 ## 快速开始
 
@@ -38,7 +66,7 @@ git clone https://github.com/bingolliu/unity-arttools-demo.git
 ```
 
 1. 用 Unity `2022.3.62f2` 打开工程根目录，等待资源导入完成。
-2. （可选）按上表放入 InstaLOD Pipeline 与 NGUI。
+2. （可选）按「[第三方组件安装](#第三方组件安装)」放入 InstaLOD Pipeline 与 NGUI；只用 LOD 预制体工具与命令窗口时无需安装。
 3. 打开减面工具（**Tools > 模型 > 减面工具入口**）或 PSD 工具（**Tools > PSD to Prefab**）。
 4. 使用自带的演示资源试跑一遍，确认流程后再替换为自己的资源。
 
@@ -96,7 +124,7 @@ git clone https://github.com/bingolliu/unity-arttools-demo.git
 
 ## PSD 转预制体
 
-> 前置条件：已放入 NGUI 并定义 `NGUI_AVAILABLE`（见上文「需自行准备的第三方组件」）。
+> 前置条件：已放入 NGUI 并定义 `NGUI_AVAILABLE`（见「[第三方组件安装](#第三方组件安装)」）。
 
 1. 打开 **Tools > PSD to Prefab**。
 2. 选择 PSD 文件并点击 **Load PSD and Parse Layers**，工具会读取画布尺寸、图层结构与文本信息。
@@ -154,6 +182,6 @@ ProjectSettings/      Unity 工程设置
 ## 说明
 
 - 本工程是工具演示用途的独立示例，不包含完整业务逻辑，仅保留运行各项工具所需的代码与资源。
-- `.gitignore` 已排除 `Library/`、构建产物等 Unity 生成目录，以及上表中的第三方商业组件。
+- `.gitignore` 已排除 `Library/`、构建产物等 Unity 生成目录，以及「[第三方组件安装](#第三方组件安装)」中的 InstaLOD Pipeline、NGUI。
 - 减面工具依赖 Windows 命令行环境与固定的目录约定；如需接入新的资源类型，请扩展 `InstaLODToolsConst` 中的目录映射与 `FolderType` 枚举。
 - 覆盖源文件前建议先提交或备份资源，避免不可逆的修改。
